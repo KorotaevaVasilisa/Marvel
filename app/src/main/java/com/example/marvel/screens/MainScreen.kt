@@ -4,8 +4,7 @@ import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Card
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -14,6 +13,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.marvel.R
@@ -25,41 +25,57 @@ import kotlin.math.absoluteValue
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 fun MainScreen() {
-    Column(
+    Surface(
         modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally
+        color = MaterialTheme.colors.surface,
+        contentColor = MaterialTheme.colors.surface
     ) {
-        Image(
-            painter = painterResource(id = R.drawable.marvel_logo),
-            contentDescription = stringResource(
-                id = R.string.logo
-            )
-        )
-        Text(text = stringResource(id = R.string.choose_your_hero))
-
-        HorizontalPager(
-            count = info.size,
-            contentPadding = PaddingValues(32.dp),
+        Column(
             modifier = Modifier.fillMaxSize(),
-        ) { page ->
-            Card(
-                modifier = Modifier
-                    .graphicsLayer {
-                        val pageOffset = calculateCurrentOffsetForPage(page).absoluteValue
-                        lerp(
-                            start = 0.85f,
-                            stop = 1f,
-                            fraction = 1f - pageOffset.coerceIn(0f, 1f)
-                        ).also { scale ->
-                            scaleX = scale
-                            scaleY = scale
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            Spacer(modifier = Modifier.height(25.dp))
+            Image(
+                painter = painterResource(id = R.drawable.marvel_logo),
+                contentDescription = stringResource(
+                    id = R.string.logo
+                ),
+                modifier = Modifier.height(45.dp),
+                contentScale = ContentScale.Fit
+            )
+            Spacer(modifier = Modifier.height(25.dp))
+            Text(
+                text = stringResource(id = R.string.choose_your_hero),
+                style = MaterialTheme.typography.h4.copy(
+                    fontWeight = FontWeight.ExtraBold
+                ),
+                color = MaterialTheme.colors.onSurface
+            )
+            Spacer(modifier = Modifier.height(25.dp))
+            HorizontalPager(
+                count = info.size,
+                contentPadding = PaddingValues(32.dp),
+                modifier = Modifier.fillMaxSize(),
+            ) { page ->
+                Card(
+                    modifier = Modifier
+                        .graphicsLayer {
+                            val pageOffset = calculateCurrentOffsetForPage(page).absoluteValue
+                            lerp(
+                                start = 0.85f,
+                                stop = 1f,
+                                fraction = 1f - pageOffset.coerceIn(0f, 1f)
+                            ).also { scale ->
+                                scaleX = scale
+                                scaleY = scale
+                            }
                         }
-                    }
-                    .fillMaxWidth(),
-                shape = RoundedCornerShape(15.dp)
-            ) {
-                val hero = info[page]
-                CardOfHero(hero = hero)
+                        .fillMaxWidth(),
+                    shape = RoundedCornerShape(15.dp)
+                ) {
+                    val hero = info[page]
+                    CardOfHero(hero = hero)
+                }
             }
         }
     }
@@ -88,7 +104,16 @@ fun CardOfHero(hero: Hero) {
             modifier = Modifier
                 .fillMaxSize()
         )
-        Text(text = hero.name)
+        Text(
+            text = hero.name,
+            modifier = Modifier
+                .align(Alignment.BottomStart)
+                .padding(16.dp),
+            maxLines = 1,
+            style = MaterialTheme.typography.h4.copy(
+                fontWeight = FontWeight.ExtraBold
+            ),
+        )
     }
 }
 
