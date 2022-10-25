@@ -7,7 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.ui.Modifier
-import com.example.marvel.screens.MainScreen
+import com.example.marvel.screens.main.screen.MainScreen
 import com.example.marvel.ui.theme.MarvelTheme
 
 class MainActivity : ComponentActivity() {

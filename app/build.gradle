@@ -47,7 +47,9 @@ android {
 }
 
 dependencies {
-    implementation('androidx.palette:palette:1.0.0')
+    implementation("io.coil-kt:coil-compose:2.2.2")
+    implementation "androidx.lifecycle:lifecycle-viewmodel-compose:2.5.1"
+    implementation "com.github.satoshun.compose.palette:coil:0.0.2"
     implementation 'androidx.core:core-ktx:1.9.0'
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.5.1'
     implementation 'androidx.activity:activity-compose:1.6.0'
