@@ -14,22 +14,17 @@ class MainViewModel : ViewModel() {
         getAllHeroes()
     }
 
-    private lateinit var currentHero: Hero
+    private val _currentHero = MutableStateFlow<Hero>(heroes.value[0])
+    val currentHero: StateFlow<Hero> = _currentHero.asStateFlow()
 
-    fun getCurrentHero(index: Int = 0): Hero {
-        currentHero = heroes.value[index]
-        return currentHero
+    fun getCurrentHero(index: Int ): Hero {
+        _currentHero.value = heroes.value[index]
+        return currentHero.value
     }
 
     private fun getAllHeroes() {
         _heroes.value = info
     }
-
-    fun lerp(start: Float, stop: Float, fraction: Float): Float {
-        return (1 - fraction) * start + fraction * stop
-    }
-
-
 }
 
 
