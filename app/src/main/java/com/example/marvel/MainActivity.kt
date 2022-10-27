@@ -3,7 +3,10 @@ package com.example.marvel
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import com.example.marvel.screens.main.screen.MainScreen
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material.Surface
+import androidx.compose.ui.Modifier
+import com.example.marvel.navigation.AppNavHost
 import com.example.marvel.ui.theme.MarvelTheme
 
 class MainActivity : ComponentActivity() {
@@ -11,8 +14,15 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             MarvelTheme(darkTheme = true) {
-                MainScreen()
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                ) {
+                    AppNavHost()
+                }
             }
         }
     }
 }
+
+
+

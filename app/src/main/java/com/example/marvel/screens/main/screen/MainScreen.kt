@@ -3,7 +3,6 @@ package com.example.marvel.screens.main.screen
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -12,14 +11,13 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.rotate
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import coil.compose.AsyncImage
+import androidx.navigation.NavController
 import com.example.marvel.R
 import com.github.satoshun.compose.palette.coil.rememberCoilPaletteState
 import com.google.accompanist.pager.ExperimentalPagerApi
@@ -28,7 +26,10 @@ import com.google.accompanist.pager.calculateCurrentOffsetForPage
 import kotlin.math.absoluteValue
 
 @Composable
-fun MainScreen(mainViewModel: MainViewModel = viewModel()) {
+fun MainScreen(
+    navController: NavController,
+    mainViewModel: MainViewModel = viewModel()
+) {
     val heroes by mainViewModel.heroes.collectAsState()
     val currentHero by mainViewModel.currentHero.collectAsState()
     val color = remember {
@@ -40,6 +41,7 @@ fun MainScreen(mainViewModel: MainViewModel = viewModel()) {
         size = heroes.size,
         currentHero = currentHero,
         currentColor = color,
+        navController = navController,
         getCurrentHero = mainViewModel::getCurrentHero
     )
 }
@@ -51,47 +53,45 @@ fun Main(
     currentHero: Hero,
     currentColor: MutableState<Color>,
     getCurrentHero: (Int) -> Hero,
+    navController: NavController,
     modifier: Modifier = Modifier
 ) {
-    Surface(
+    Column(
         modifier = modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Column(
-            modifier = modifier.fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
 
-            Spacer(modifier = modifier.height(26.dp))
+        Spacer(modifier = modifier.height(26.dp))
 
-            Image(
-                painter = painterResource(id = R.drawable.marvel_logo),
-                contentDescription = stringResource(
-                    id = R.string.logo
-                ),
-                modifier = modifier.height(45.dp),
-                contentScale = ContentScale.Fit
-            )
+        Image(
+            painter = painterResource(id = R.drawable.marvel_logo),
+            contentDescription = stringResource(
+                id = R.string.logo
+            ),
+            modifier = modifier.height(45.dp),
+            contentScale = ContentScale.Fit
+        )
 
-            Spacer(modifier = modifier.height(26.dp))
+        Spacer(modifier = modifier.height(26.dp))
 
-            Text(
-                text = stringResource(id = R.string.choose_your_hero),
-                style = MaterialTheme.typography.h4.copy(
-                    fontWeight = FontWeight.ExtraBold
-                ),
-                color = MaterialTheme.colors.onSurface
-            )
+        Text(
+            text = stringResource(id = R.string.choose_your_hero),
+            style = MaterialTheme.typography.h4.copy(
+                fontWeight = FontWeight.ExtraBold
+            ),
+            color = MaterialTheme.colors.onSurface
+        )
 
-            Spacer(modifier = Modifier.height(26.dp))
+        Spacer(modifier = modifier.height(26.dp))
 
-            RowHeroes(
-                countHeroes = size,
-                currentColor = currentColor,
-                heroes = heroes,
-                currentHero = currentHero,
-                getCurrentHero = getCurrentHero
-            )
-        }
+        RowHeroes(
+            countHeroes = size,
+            currentColor = currentColor,
+            heroes = heroes,
+            currentHero = currentHero,
+            getCurrentHero = getCurrentHero,
+            navController = navController
+        )
     }
 }
 
@@ -103,6 +103,7 @@ fun RowHeroes(
     heroes: List<Hero>,
     currentHero: Hero,
     getCurrentHero: (Int) -> Hero,
+    navController: NavController
 ) {
     HorizontalPager(
         count = countHeroes,
@@ -120,12 +121,14 @@ fun RowHeroes(
             }
     ) { page ->
         getCurrentHero(currentPage)
-        val hero = heroes[page]
 
-        val paletteState = rememberCoilPaletteState(data = currentHero.image, builder = {
-            crossfade(true)
-            allowHardware(false)
-        })
+        val paletteState = rememberCoilPaletteState(
+            data = currentHero.image,
+            builder = {
+                crossfade(true)
+                allowHardware(false)
+            })
+
         val colors = listOf(
             paletteState.vibrant,
             paletteState.darkVibrant,
@@ -139,57 +142,14 @@ fun RowHeroes(
             currentColor.value = colors[3]!!
         }
 
-        Card(
-            modifier = Modifier
-                .graphicsLayer {
-                    val pageOffset = calculateCurrentOffsetForPage(page).absoluteValue
-                    lerp(
-                        start = 0.85f,
-                        stop = 1f,
-                        fraction = 1f - pageOffset.coerceIn(0f, 1f)
-                    )
-                        .also { scale ->
-                            scaleX = scale
-                            scaleY = scale
-                        }
-                }
-                .fillMaxWidth(),
-            shape = RoundedCornerShape(15.dp)
-        ) {
-            CardOfHero(hero)
-        }
-    }
-}
-
-fun lerp(start: Float, stop: Float, fraction: Float): Float {
-    return (1 - fraction) * start + fraction * stop
-}
-
-@Composable
-fun CardOfHero(
-    hero: Hero,
-    modifier: Modifier = Modifier
-) {
-    Box(
-        modifier.fillMaxSize()
-    ) {
-        AsyncImage(
-            model = hero.image,
-            contentDescription = stringResource(R.string.hero),
-            contentScale = ContentScale.Crop,
-            modifier = modifier.fillMaxSize()
-        )
-
-        Text(
-            text = hero.name,
-            modifier = modifier
-                .align(Alignment.BottomStart)
-                .padding(16.dp),
-            maxLines = 1,
-            style = MaterialTheme.typography.h4.copy(
-                fontWeight = FontWeight.ExtraBold
-            )
+        CardOfHero(
+            currentOffset = calculateCurrentOffsetForPage(page).absoluteValue,
+            navController = navController,
+            hero = heroes[page]
         )
     }
 }
+
+
+
 

@@ -33,25 +33,25 @@ val info = listOf<Hero>(
         id = 0,
         name = "Thor",
         image = "https://i.annihil.us/u/prod/marvel/i/mg/d/d0/5269657a74350.jpg",
-        information = ""
+        information = "I am Thor"
     ),
     Hero(
         id = 1,
         name = "Captain",
         image = "https://i.annihil.us/u/prod/marvel/i/mg/3/50/537ba56d31087.jpg",
-        information = ""
+        information = "I am Captain America"
     ),
     Hero(
         id = 2,
         name = "Iron man",
         image = "https://i.annihil.us/u/prod/marvel/i/mg/9/c0/527bb7b37ff55.jpg",
-        information = ""
+        information = "I am Iron man"
     ),
     Hero(
         id = 3,
         name = "Deadpool",
         image = "https://i.annihil.us/u/prod/marvel/i/mg/9/90/5261a86cacb99.jpg",
-        information = ""
+        information = "I am Deadpool"
     ),
 )
 
