@@ -11,10 +11,7 @@ import com.example.marvel.screens.information.screen.InfoScreen
 import com.example.marvel.screens.main.screen.MainScreen
 import com.example.marvel.screens.main.screen.MainViewModel
 
-sealed class Screen(val route: String) {
-    object MainScreen : Screen("main_screen")
-    object InfoScreen : Screen("info_screen")
-}
+
 
 @Composable
 fun AppNavHost() {
@@ -35,4 +32,9 @@ fun AppNavHost() {
             )
         }
     }
+}
+
+sealed class Screen(val route: String) {
+    object MainScreen : Screen("main_screen")
+    object InfoScreen : Screen("info_screen")
 }

@@ -1,7 +1,10 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
+
+    id("io.gitlab.arturbosch.detekt").version("1.22.0-RC2")
 }
+
 
 android {
     namespace 'com.example.marvel'
@@ -44,6 +47,7 @@ android {
             excludes += '/META-INF/{AL2.0,LGPL2.1}'
         }
     }
+
 }
 
 dependencies {

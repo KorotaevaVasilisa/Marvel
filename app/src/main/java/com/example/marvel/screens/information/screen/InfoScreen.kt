@@ -1,6 +1,12 @@
 package com.example.marvel.screens.information.screen
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
@@ -30,7 +36,7 @@ fun InfoScreen(
     mainViewModel: MainViewModel = viewModel()
 ) {
     val heroes by mainViewModel.heroes.collectAsState()
-    val currentHero=heroes.find { it.id==heroId }
+    val currentHero = heroes.find { it.id == heroId }
     Info(navHostController, currentHero)
 }
 
@@ -72,19 +78,5 @@ fun Info(navigateToInfoScreen: NavController, hero: Hero?, modifier: Modifier = 
                 )
             )
         }
-
     }
 }
-
-//@Preview(showBackground = true)
-//@Composable
-//fun InfoScreenPreview() {
-//    InfoScreen(
-//        hero = Hero(
-//            1,
-//            "Thor",
-//            "https://i.annihil.us/u/prod/marvel/i/mg/d/d0/5269657a74350.jpg",
-//            "I am Thor"
-//        )
-//    )
-//}

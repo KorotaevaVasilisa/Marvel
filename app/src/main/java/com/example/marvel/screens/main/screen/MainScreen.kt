@@ -2,9 +2,19 @@ package com.example.marvel.screens.main.screen
 
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
-import androidx.compose.runtime.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
@@ -114,7 +124,7 @@ fun RowHeroes(
                 rotate(degrees = 45f) {
                     drawRect(
                         color = currentColor.value,
-                        topLeft = Offset(450f, 150f),
+                        topLeft = Offset(x = 450f, y = 150f),
                         size = size / 1f
                     )
                 }
@@ -137,9 +147,9 @@ fun RowHeroes(
             paletteState.darkMuted,
             paletteState.lightMuted,
             paletteState.dominant
-        ).filter { it != null }
+        ).filterNotNull()
         colors.forEach {
-            currentColor.value = colors[3]!!
+            currentColor.value = colors.get(index = 3)
         }
 
         CardOfHero(
