@@ -26,7 +26,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.marvel.R
-import com.example.marvel.screens.main.screen.Hero
+import com.example.marvel.api.model.Hero
 import com.example.marvel.screens.main.screen.MainViewModel
 
 @Composable
@@ -44,7 +44,7 @@ fun InfoScreen(
 fun Info(navigateToInfoScreen: NavController, hero: Hero?, modifier: Modifier = Modifier) {
     Box(modifier = modifier.fillMaxSize()) {
         AsyncImage(
-            model = hero?.image,
+            model = "https:${hero?.thumbnail?.path?.substringAfter(":")}.jpg",
             contentDescription = hero?.name,
             contentScale = ContentScale.Crop,
             modifier = modifier.fillMaxSize()
@@ -71,7 +71,7 @@ fun Info(navigateToInfoScreen: NavController, hero: Hero?, modifier: Modifier = 
             )
             Spacer(modifier = modifier.height(5.dp))
             Text(
-                text = hero.information,
+                text = hero.description,
                 maxLines = 2,
                 style = MaterialTheme.typography.h4.copy(
                     fontWeight = FontWeight.ExtraBold

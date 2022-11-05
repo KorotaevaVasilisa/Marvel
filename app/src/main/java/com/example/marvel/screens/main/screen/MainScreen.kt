@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.marvel.R
+import com.example.marvel.api.model.Hero
 import com.github.satoshun.compose.palette.coil.rememberCoilPaletteState
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
@@ -41,28 +42,21 @@ fun MainScreen(
     mainViewModel: MainViewModel = viewModel()
 ) {
     val heroes by mainViewModel.heroes.collectAsState()
-    val currentHero by mainViewModel.currentHero.collectAsState()
     val color = remember {
         mutableStateOf(Color.Gray)
     }
 
     Main(
         heroes = heroes,
-        size = heroes.size,
-        currentHero = currentHero,
         currentColor = color,
         navController = navController,
-        getCurrentHero = mainViewModel::getCurrentHero
     )
 }
 
 @Composable
 fun Main(
     heroes: List<Hero>,
-    size: Int,
-    currentHero: Hero,
     currentColor: MutableState<Color>,
-    getCurrentHero: (Int) -> Hero,
     navController: NavController,
     modifier: Modifier = Modifier
 ) {
@@ -95,11 +89,8 @@ fun Main(
         Spacer(modifier = modifier.height(26.dp))
 
         RowHeroes(
-            countHeroes = size,
             currentColor = currentColor,
             heroes = heroes,
-            currentHero = currentHero,
-            getCurrentHero = getCurrentHero,
             navController = navController
         )
     }
@@ -108,15 +99,12 @@ fun Main(
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 fun RowHeroes(
-    countHeroes: Int,
     currentColor: MutableState<Color>,
     heroes: List<Hero>,
-    currentHero: Hero,
-    getCurrentHero: (Int) -> Hero,
     navController: NavController
 ) {
     HorizontalPager(
-        count = countHeroes,
+        count = heroes.size,
         contentPadding = PaddingValues(32.dp),
         modifier = Modifier
             .fillMaxSize()
@@ -130,16 +118,14 @@ fun RowHeroes(
                 }
             }
     ) { page ->
-        getCurrentHero(currentPage)
-
         val paletteState = rememberCoilPaletteState(
-            data = currentHero.image,
+            data = "https:${heroes[currentPage].thumbnail.path.substringAfter(':')}.jpg",
             builder = {
                 crossfade(true)
                 allowHardware(false)
             })
 
-        val colors = listOf(
+        val colors = listOfNotNull(
             paletteState.vibrant,
             paletteState.darkVibrant,
             paletteState.lightVibrant,
@@ -147,8 +133,8 @@ fun RowHeroes(
             paletteState.darkMuted,
             paletteState.lightMuted,
             paletteState.dominant
-        ).filterNotNull()
-        colors.forEach {
+        )
+        colors.forEach { _ ->
             currentColor.value = colors.get(index = 3)
         }
 

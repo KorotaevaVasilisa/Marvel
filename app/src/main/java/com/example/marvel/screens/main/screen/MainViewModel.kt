@@ -1,10 +1,18 @@
 package com.example.marvel.screens.main.screen
 
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.marvel.api.MarvelApi
+import com.example.marvel.api.model.Hero
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
+import java.io.IOException
+import java.net.ConnectException
+import java.net.SocketException
 
 class MainViewModel : ViewModel() {
     private val _heroes = MutableStateFlow<List<Hero>>(emptyList())
@@ -14,51 +22,17 @@ class MainViewModel : ViewModel() {
         getAllHeroes()
     }
 
-    private val _currentHero = MutableStateFlow<Hero>(heroes.value[0])
-    val currentHero: StateFlow<Hero> = _currentHero.asStateFlow()
-
-    fun getCurrentHero(index: Int ): Hero {
-        _currentHero.value = heroes.value[index]
-        return currentHero.value
-    }
-
     private fun getAllHeroes() {
-        _heroes.value = info
+        viewModelScope.launch {
+            try {
+                _heroes.value = MarvelApi.retrofitService.getCharacters().data.heroes
+            } catch (e: ConnectException) {
+                Log.e("RETROFIT", "ERROR : " + e.localizedMessage)
+            } catch (e: SocketException) {
+                Log.e("RETROFIT", "ERROR : " + e.localizedMessage)
+            } catch (e: IOException) {
+                Log.e("RETROFIT", "ERROR : " + e.localizedMessage)
+            }
+        }
     }
 }
-
-
-val info = listOf<Hero>(
-    Hero(
-        id = 0,
-        name = "Thor",
-        image = "https://i.annihil.us/u/prod/marvel/i/mg/d/d0/5269657a74350.jpg",
-        information = "I am Thor"
-    ),
-    Hero(
-        id = 1,
-        name = "Captain",
-        image = "https://i.annihil.us/u/prod/marvel/i/mg/3/50/537ba56d31087.jpg",
-        information = "I am Captain America"
-    ),
-    Hero(
-        id = 2,
-        name = "Iron man",
-        image = "https://i.annihil.us/u/prod/marvel/i/mg/9/c0/527bb7b37ff55.jpg",
-        information = "I am Iron man"
-    ),
-    Hero(
-        id = 3,
-        name = "Deadpool",
-        image = "https://i.annihil.us/u/prod/marvel/i/mg/9/90/5261a86cacb99.jpg",
-        information = "I am Deadpool"
-    ),
-)
-
-
-data class Hero(
-    val id: Int = 0,
-    val name: String = "",
-    val image: String = "",
-    val information: String = ""
-)

@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.marvel.R
+import com.example.marvel.api.model.Hero
 import com.example.marvel.navigation.Screen
 
 @Composable
@@ -36,15 +37,14 @@ fun CardOfHero(
                     start = 0.85f,
                     stop = 1f,
                     fraction = 1f - currentOffset.coerceIn(0f, 1f)
-                )
-                    .also { scale ->
-                        scaleX = scale
-                        scaleY = scale
-                    }
+                ).also { scale ->
+                    scaleX = scale
+                    scaleY = scale
+                }
             }
             .fillMaxWidth()
             .clickable {
-                navController.navigate(Screen.InfoScreen.route + "/" + hero.id)
+                navController.navigate("${Screen.InfoScreen.route}/${hero.id}")
             },
         shape = RoundedCornerShape(15.dp)
     ) {
@@ -53,7 +53,7 @@ fun CardOfHero(
                 .fillMaxSize()
         ) {
             AsyncImage(
-                model = hero.image,
+                model = "https:${hero.thumbnail.path.substringAfter(":")}.jpg",
                 contentDescription = stringResource(R.string.hero),
                 contentScale = ContentScale.Crop,
                 modifier = modifier.fillMaxSize()
