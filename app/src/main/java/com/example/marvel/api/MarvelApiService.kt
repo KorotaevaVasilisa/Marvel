@@ -6,6 +6,7 @@ import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.GET
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 
@@ -18,6 +19,14 @@ const val HASH = "a963d2d10fbb7bd7f93ada240b258839"
 interface MarvelApiService {
     @GET("v1/public/characters")
     suspend fun getCharacters(
+        @Query("ts") ts: String = TIME,
+        @Query("apikey") apikey: String = PUBLIC_KEY,
+        @Query("hash") hash: String = HASH
+    ): Information
+
+    @GET("v1/public/characters/{characterId}")
+    suspend fun getCharacter(
+        @Path("characterId") id: Int,
         @Query("ts") ts: String = TIME,
         @Query("apikey") apikey: String = PUBLIC_KEY,
         @Query("hash") hash: String = HASH

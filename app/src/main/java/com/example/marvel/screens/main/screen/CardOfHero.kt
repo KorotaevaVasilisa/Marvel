@@ -44,6 +44,7 @@ fun CardOfHero(
             }
             .fillMaxWidth()
             .clickable {
+                //
                 navController.navigate("${Screen.InfoScreen.route}/${hero.id}")
             },
         shape = RoundedCornerShape(15.dp)

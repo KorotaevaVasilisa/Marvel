@@ -15,7 +15,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -27,17 +26,13 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.marvel.R
 import com.example.marvel.api.model.Hero
-import com.example.marvel.screens.main.screen.MainViewModel
 
 @Composable
 fun InfoScreen(
     navHostController: NavController,
-    heroId: Int?,
-    mainViewModel: MainViewModel = viewModel()
+    infoViewModel: InfoViewModel = viewModel()
 ) {
-    val heroes by mainViewModel.heroes.collectAsState()
-    val currentHero = heroes.find { it.id == heroId }
-    Info(navHostController, currentHero)
+    Info(navHostController, infoViewModel.hero.collectAsState().value)
 }
 
 @Composable
@@ -63,7 +58,7 @@ fun Info(navigateToInfoScreen: NavController, hero: Hero?, modifier: Modifier = 
                 .padding(20.dp),
         ) {
             Text(
-                text = hero?.name!!,
+                text = hero?.name.toString(),
                 maxLines = 1,
                 style = MaterialTheme.typography.h3.copy(
                     fontWeight = FontWeight.ExtraBold
@@ -71,7 +66,7 @@ fun Info(navigateToInfoScreen: NavController, hero: Hero?, modifier: Modifier = 
             )
             Spacer(modifier = modifier.height(5.dp))
             Text(
-                text = hero.description,
+                text = hero?.description.toString(),
                 maxLines = 2,
                 style = MaterialTheme.typography.h4.copy(
                     fontWeight = FontWeight.ExtraBold
