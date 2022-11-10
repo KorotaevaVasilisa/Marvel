@@ -1,12 +1,13 @@
 package com.example.marvel.screens.main.screen
 
-
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.material.AlertDialog
+import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -51,7 +52,13 @@ fun MainScreen(
         currentColor = color,
         navController = navController,
     )
+
+    if (mainViewModel.hasError.collectAsState().value) {
+        ShowAlert()
+    }
+
 }
+
 
 @Composable
 fun Main(
@@ -146,6 +153,24 @@ fun RowHeroes(
     }
 }
 
-
+@Composable
+fun ShowAlert() {
+    var show = remember {
+        mutableStateOf(true)
+    }
+    if (show.value) {
+        AlertDialog(
+            onDismissRequest = { show.value = false },
+            title = { Text(text = "Ошибка сети") },
+            confirmButton = {
+                Button(onClick = {
+                    show.value = false
+                }) {
+                    Text(text = "Yes")
+                }
+            }
+        )
+    }
+}
 
 
