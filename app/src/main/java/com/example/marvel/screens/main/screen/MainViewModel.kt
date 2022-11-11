@@ -14,7 +14,7 @@ import kotlinx.coroutines.launch
 class MainViewModel : ViewModel() {
     private val _heroes = MutableStateFlow<List<Hero>>(emptyList())
     val heroes: StateFlow<List<Hero>> = _heroes.asStateFlow()
-    var hasError = MutableStateFlow<Boolean>(true)
+    var hasError = MutableStateFlow<Boolean>(false)
 
     init {
         getAllHeroes()

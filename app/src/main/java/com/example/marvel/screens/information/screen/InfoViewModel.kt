@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.marvel.api.MarvelApi
 import com.example.marvel.api.model.Hero
+import com.example.marvel.api.model.Thumbnail
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -16,7 +17,7 @@ import java.net.SocketException
 
 class InfoViewModel(private val stateHandle: SavedStateHandle) : ViewModel() {
 
-    private val _hero = MutableStateFlow<Hero?>(null)
+    private val _hero = MutableStateFlow<Hero?>(Hero("", 0, "", Thumbnail("", "")))
     val hero: StateFlow<Hero?> = _hero.asStateFlow()
 
     init {
@@ -27,7 +28,7 @@ class InfoViewModel(private val stateHandle: SavedStateHandle) : ViewModel() {
     private fun getHero(id: Int) {
         viewModelScope.launch {
             try {
-                _hero.value= MarvelApi.retrofitService.getCharacter(id = id).data.heroes.first()
+                _hero.value = MarvelApi.retrofitService.getCharacter(id = id).data.heroes.first()
             } catch (e: ConnectException) {
                 Log.e("RETROFIT", "ERROR : " + e.localizedMessage)
             } catch (e: SocketException) {
