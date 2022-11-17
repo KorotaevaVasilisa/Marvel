@@ -17,7 +17,7 @@ import java.net.SocketException
 
 class InfoViewModel(private val stateHandle: SavedStateHandle) : ViewModel() {
 
-    private val _hero = MutableStateFlow<Hero?>(Hero("", 0, "", Thumbnail("", "")))
+    private val _hero = MutableStateFlow<Hero?>(Hero(0, "", "", Thumbnail("", "")))
     val hero: StateFlow<Hero?> = _hero.asStateFlow()
 
     init {
