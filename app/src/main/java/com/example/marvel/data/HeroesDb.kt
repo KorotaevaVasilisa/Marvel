@@ -4,39 +4,29 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.example.marvel.api.model.Hero
 
 @Database(
-    entities = [Hero::class],
+    entities = [HeroEntity::class],
     version = 1,
     exportSchema = false
 )
 abstract class HeroesDb : RoomDatabase() {
-    abstract val dao: HeroesDao
+    abstract fun getHeroesDao(): HeroesDao
 
     companion object {
-
         @Volatile
-        private var INSTANCE: HeroesDao? = null
-        fun getDaoInstance(context: Context): HeroesDao {
-            synchronized(this) {
-                var instance = INSTANCE
-                if (instance == null) {
-                    instance = buildDatabase(context).dao
-                    INSTANCE = instance
-                }
-                return instance
+        private var INSTANCE: HeroesDb? = null
+
+        fun getDatabase(context: Context): HeroesDb {
+            return INSTANCE ?: synchronized(this) {
+                val instance = Room.databaseBuilder(
+                    context.applicationContext,
+                    HeroesDb::class.java,
+                    "word_database"
+                ).build()
+                INSTANCE = instance as HeroesDb
+                instance as HeroesDb
             }
         }
-
-        private fun buildDatabase(context: Context):
-                HeroesDb =
-            Room.databaseBuilder(
-                context.applicationContext,
-                HeroesDb::class.java,
-                "heroes_database"
-            )
-                .fallbackToDestructiveMigration()
-                .build()
     }
 }
