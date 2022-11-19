@@ -25,7 +25,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.marvel.R
 import com.example.marvel.api.model.Hero
@@ -38,7 +38,7 @@ import kotlin.math.absoluteValue
 @Composable
 fun MainScreen(
     navController: NavController,
-    mainViewModel: MainViewModel = viewModel()
+    mainViewModel: MainViewModel = hiltViewModel()
 ) {
     val heroes by mainViewModel.heroes.collectAsState()
     val color = remember {

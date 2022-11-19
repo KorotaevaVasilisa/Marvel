@@ -21,7 +21,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.marvel.R
@@ -30,7 +30,7 @@ import com.example.marvel.api.model.Hero
 @Composable
 fun InfoScreen(
     navHostController: NavController,
-    infoViewModel: InfoViewModel = viewModel()
+    infoViewModel: InfoViewModel = hiltViewModel()
 ) {
     Info(navHostController, infoViewModel.hero.collectAsState().value)
 }
