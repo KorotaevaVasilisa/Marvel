@@ -28,7 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.marvel.R
-import com.example.marvel.api.model.Hero
+import com.example.marvel.data.Hero
 import com.github.satoshun.compose.palette.coil.rememberCoilPaletteState
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
@@ -119,7 +119,7 @@ fun RowHeroes(
             }
     ) { page ->
         val paletteState = rememberCoilPaletteState(
-            data = "https:${heroes[currentPage].thumbnail.path.substringAfter(':')}.jpg",
+            data = heroes[currentPage].path,
             builder = {
                 crossfade(true)
                 allowHardware(false)

@@ -25,7 +25,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.marvel.R
-import com.example.marvel.api.model.Hero
+import com.example.marvel.data.Hero
 
 @Composable
 fun InfoScreen(
@@ -39,7 +39,7 @@ fun InfoScreen(
 fun Info(navigateToInfoScreen: NavController, hero: Hero?, modifier: Modifier = Modifier) {
     Box(modifier = modifier.fillMaxSize()) {
         AsyncImage(
-            model = "https:${hero?.thumbnail?.path?.substringAfter(":")}.jpg",
+            model = hero?.path,
             contentDescription = hero?.name,
             contentScale = ContentScale.Crop,
             modifier = modifier.fillMaxSize()
