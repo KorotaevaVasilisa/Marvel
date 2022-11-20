@@ -13,19 +13,3 @@ interface MarvelApiService {
         @Path("characterId") id: Int
     ): Information
 }
-
-//private val moshi = Moshi.Builder()
-//    .add(KotlinJsonAdapterFactory())
-//    .build()
-//
-//private val okhttp=OkHttpClient.Builder().addInterceptor(MarvelApiInterceptor()).build()
-//
-//private val retrofit = Retrofit.Builder()
-//    .addConverterFactory(MoshiConverterFactory.create(moshi))
-//    .client(okhttp)
-//    .baseUrl(Constants.BASE_URL)
-//    .build()
-//
-//object MarvelApi {
-//    val retrofitService: MarvelApiService by lazy { retrofit.create(MarvelApiService::class.java) }
-//}

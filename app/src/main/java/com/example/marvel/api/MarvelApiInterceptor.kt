@@ -1,6 +1,6 @@
 package com.example.marvel.api
 
-import com.example.marvel.Constants
+import com.example.marvel.utils.Constants
 import okhttp3.Interceptor
 import okhttp3.Response
 

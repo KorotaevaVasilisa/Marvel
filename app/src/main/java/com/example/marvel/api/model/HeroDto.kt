@@ -19,6 +19,6 @@ data class HeroDto(
         id = id,
         name = name,
         description = description,
-        path = thumbnail.path.replace("http:", "https:") + thumbnail.extension
+        path = thumbnail.path.replace("http:", "https:") + "." + thumbnail.extension
     )
 }
