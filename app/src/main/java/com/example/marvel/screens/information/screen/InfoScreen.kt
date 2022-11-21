@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
@@ -32,15 +33,31 @@ fun InfoScreen(
     navHostController: NavController,
     infoViewModel: InfoViewModel = hiltViewModel()
 ) {
-    Info(navHostController, infoViewModel.hero.collectAsState().value)
+    val heroState = infoViewModel.hero.collectAsState().value
+
+    if (heroState.isLoading) {
+        Box {
+            CircularProgressIndicator(
+                modifier = Modifier
+                    .size(40.dp)
+                    .align(Alignment.Center)
+            )
+        }
+    }
+
+    Info(navHostController, heroState.data)
 }
 
 @Composable
-fun Info(navigateToInfoScreen: NavController, hero: Hero?, modifier: Modifier = Modifier) {
+fun Info(
+    navigateToInfoScreen: NavController,
+    hero: Hero,
+    modifier: Modifier = Modifier
+) {
     Box(modifier = modifier.fillMaxSize()) {
         AsyncImage(
-            model = hero?.path,
-            contentDescription = hero?.name,
+            model = hero.path,
+            contentDescription = hero.name,
             contentScale = ContentScale.Crop,
             modifier = modifier.fillMaxSize()
         )
@@ -58,7 +75,7 @@ fun Info(navigateToInfoScreen: NavController, hero: Hero?, modifier: Modifier = 
                 .padding(20.dp),
         ) {
             Text(
-                text = hero?.name.toString(),
+                text = hero.name,
                 maxLines = 1,
                 style = MaterialTheme.typography.h3.copy(
                     fontWeight = FontWeight.ExtraBold
@@ -66,7 +83,7 @@ fun Info(navigateToInfoScreen: NavController, hero: Hero?, modifier: Modifier = 
             )
             Spacer(modifier = modifier.height(5.dp))
             Text(
-                text = hero?.description.toString(),
+                text = hero.description,
                 maxLines = 2,
                 style = MaterialTheme.typography.h4.copy(
                     fontWeight = FontWeight.ExtraBold
