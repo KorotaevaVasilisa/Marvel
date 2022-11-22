@@ -1,8 +1,10 @@
 package com.example.marvel.screens.main.screen
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.marvel.api.onError
+import com.example.marvel.api.onException
+import com.example.marvel.api.onSuccess
 import com.example.marvel.data.Hero
 import com.example.marvel.data.HeroState
 import com.example.marvel.repository.DatabaseSource
@@ -14,8 +16,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import retrofit2.HttpException
-import java.net.UnknownHostException
 import javax.inject.Inject
 
 @HiltViewModel
@@ -34,26 +34,22 @@ class MainViewModel @Inject constructor(
 
     private fun getAllHeroes() {
         viewModelScope.launch() {
-            try {
-                val result = networkRepository.getAllHeroes()
+            val response = networkRepository.getAllHeroes()
+            response.onSuccess { heroesList ->
+                val result = heroesList.data.heroes.map { it.toHero() }
                 dataRepository.insertHeroes(result)
                 _heroes.update { HeroState(result, false) }
-            } catch (throwable: Throwable) {
+            }
+            .onError { code, message ->
                 val deferred = async { dataRepository.getHeroes() }
                 val result = deferred.await()
-                _heroes.update { HeroState(result, false, throwable.message) }
-                when (throwable) {
-                    is UnknownHostException -> {
-                        Log.e("Network", "ERROR : " + throwable.localizedMessage)
-                    }
-                    is HttpException -> {
-                        val code = throwable.code()
-                        Log.e("RETROFIT", "ERROR :$code " + throwable.localizedMessage)
-                    }
-                    else -> {
-                        Log.e("Error", "" + throwable.localizedMessage)
-                    }
-                }
+                _heroes.update { HeroState(result, false, "Ошибка $message $code") }
+            }
+            .onException { error ->
+                val deferred = async { dataRepository.getHeroes() }
+                val result = deferred.await()
+                _heroes.update { HeroState(result, false, "Ошибка $error ") }
+
             }
         }
     }
