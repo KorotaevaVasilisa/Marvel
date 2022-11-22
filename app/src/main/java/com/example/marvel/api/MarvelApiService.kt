@@ -6,10 +6,10 @@ import retrofit2.http.Path
 
 interface MarvelApiService {
     @GET("v1/public/characters")
-    suspend fun getCharacters(): Information
+    suspend fun getCharacters(): NetworkResult<Information>
 
     @GET("v1/public/characters/{characterId}")
     suspend fun getCharacter(
         @Path("characterId") id: Int
-    ): Information
+    ): NetworkResult<Information>
 }
