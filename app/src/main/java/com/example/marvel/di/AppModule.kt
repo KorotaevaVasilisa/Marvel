@@ -5,6 +5,7 @@ import androidx.room.Room
 import com.example.marvel.utils.Constants
 import com.example.marvel.api.MarvelApiInterceptor
 import com.example.marvel.api.MarvelApiService
+import com.example.marvel.api.NetworkResultCallAdapterFactory
 import com.example.marvel.data.HeroesDb
 import com.example.marvel.data.dao.HeroesDao
 import com.squareup.moshi.Moshi
@@ -36,9 +37,11 @@ object AppModule {
     @Provides
     @Singleton
     fun provideRetrofit(moshi: Moshi, client: OkHttpClient): Retrofit =
-        Retrofit.Builder().addConverterFactory(MoshiConverterFactory.create(moshi))
+        Retrofit.Builder()
             .client(client)
             .baseUrl(Constants.BASE_URL)
+            .addConverterFactory(MoshiConverterFactory.create(moshi))
+            .addCallAdapterFactory(NetworkResultCallAdapterFactory.create())
             .build()
 
 
