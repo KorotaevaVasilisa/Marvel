@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
@@ -27,6 +26,7 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.marvel.R
 import com.example.marvel.data.Hero
+import com.example.marvel.screens.main.screen.ShowAlert
 
 @Composable
 fun InfoScreen(
@@ -35,14 +35,8 @@ fun InfoScreen(
 ) {
     val heroState = infoViewModel.hero.collectAsState().value
 
-    if (heroState.isLoading) {
-        Box {
-            CircularProgressIndicator(
-                modifier = Modifier
-                    .size(40.dp)
-                    .align(Alignment.Center)
-            )
-        }
+    if (heroState.error != null) {
+        ShowAlert(message = heroState.error)
     }
 
     Info(navHostController, heroState.data)
