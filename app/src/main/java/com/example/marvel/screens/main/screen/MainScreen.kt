@@ -1,11 +1,16 @@
 package com.example.marvel.screens.main.screen
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
+import androidx.compose.material.AlertDialog
+import androidx.compose.material.Button
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -25,10 +30,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.marvel.R
-import com.example.marvel.api.model.Hero
+import com.example.marvel.data.Hero
+import com.example.marvel.data.HeroState
 import com.github.satoshun.compose.palette.coil.rememberCoilPaletteState
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
@@ -38,15 +44,15 @@ import kotlin.math.absoluteValue
 @Composable
 fun MainScreen(
     navController: NavController,
-    mainViewModel: MainViewModel = viewModel()
+    mainViewModel: MainViewModel = hiltViewModel()
 ) {
-    val heroes by mainViewModel.heroes.collectAsState()
+    val heroesState by mainViewModel.heroes.collectAsState()
     val color = remember {
         mutableStateOf(Color.Gray)
     }
 
     Main(
-        heroes = heroes,
+        heroesState = heroesState,
         currentColor = color,
         navController = navController,
     )
@@ -55,7 +61,7 @@ fun MainScreen(
 
 @Composable
 fun Main(
-    heroes: List<Hero>,
+    heroesState: HeroState<List<Hero>>,
     currentColor: MutableState<Color>,
     navController: NavController,
     modifier: Modifier = Modifier
@@ -88,9 +94,23 @@ fun Main(
 
         Spacer(modifier = modifier.height(26.dp))
 
+        if (heroesState.isLoading) {
+            Box {
+                CircularProgressIndicator(
+                    modifier = modifier
+                        .size(20.dp)
+                        .align(Alignment.Center)
+                )
+            }
+        }
+
+        if (heroesState.error != null) {
+            ShowAlert(message = heroesState.error)
+        }
+
         RowHeroes(
             currentColor = currentColor,
-            heroes = heroes,
+            heroes = heroesState.data,
             navController = navController
         )
     }
@@ -119,7 +139,7 @@ fun RowHeroes(
             }
     ) { page ->
         val paletteState = rememberCoilPaletteState(
-            data = "https:${heroes[currentPage].thumbnail.path.substringAfter(':')}.jpg",
+            data = heroes[currentPage].path,
             builder = {
                 crossfade(true)
                 allowHardware(false)
@@ -146,5 +166,22 @@ fun RowHeroes(
     }
 }
 
-
-
+@Composable
+fun ShowAlert(message: String? = "") {
+    var show = remember {
+        mutableStateOf(true)
+    }
+    if (show.value) {
+        AlertDialog(
+            onDismissRequest = { show.value = false },
+            title = { Text(text = message!!) },
+            confirmButton = {
+                Button(onClick = {
+                    show.value = false
+                }) {
+                    Text(text = "Yes")
+                }
+            }
+        )
+    }
+}

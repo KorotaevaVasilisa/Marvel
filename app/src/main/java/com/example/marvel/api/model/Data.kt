@@ -13,7 +13,7 @@ data class Data(
     @Json(name = "offset")
     val offset: Int,
     @Json(name = "results")
-    val heroes: List<Hero>,
+    val heroes: List<HeroDto>,
     @Json(name = "total")
     val total: Int
 )

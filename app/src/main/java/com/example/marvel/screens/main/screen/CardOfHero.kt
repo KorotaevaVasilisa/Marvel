@@ -20,7 +20,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.marvel.R
-import com.example.marvel.api.model.Hero
+import com.example.marvel.data.Hero
 import com.example.marvel.navigation.Screen
 
 @Composable
@@ -54,7 +54,7 @@ fun CardOfHero(
                 .fillMaxSize()
         ) {
             AsyncImage(
-                model = "https:${hero.thumbnail.path.substringAfter(":")}.jpg",
+                model = hero.path,
                 contentDescription = stringResource(R.string.hero),
                 contentScale = ContentScale.Crop,
                 modifier = modifier.fillMaxSize()

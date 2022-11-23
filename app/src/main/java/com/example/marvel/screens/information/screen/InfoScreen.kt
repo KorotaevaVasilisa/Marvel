@@ -21,26 +21,37 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.marvel.R
-import com.example.marvel.api.model.Hero
+import com.example.marvel.data.Hero
+import com.example.marvel.screens.main.screen.ShowAlert
 
 @Composable
 fun InfoScreen(
     navHostController: NavController,
-    infoViewModel: InfoViewModel = viewModel()
+    infoViewModel: InfoViewModel = hiltViewModel()
 ) {
-    Info(navHostController, infoViewModel.hero.collectAsState().value)
+    val heroState = infoViewModel.hero.collectAsState().value
+
+    if (heroState.error != null) {
+        ShowAlert(message = heroState.error)
+    }
+
+    Info(navHostController, heroState.data)
 }
 
 @Composable
-fun Info(navigateToInfoScreen: NavController, hero: Hero?, modifier: Modifier = Modifier) {
+fun Info(
+    navigateToInfoScreen: NavController,
+    hero: Hero,
+    modifier: Modifier = Modifier
+) {
     Box(modifier = modifier.fillMaxSize()) {
         AsyncImage(
-            model = "https:${hero?.thumbnail?.path?.substringAfter(":")}.jpg",
-            contentDescription = hero?.name,
+            model = hero.path,
+            contentDescription = hero.name,
             contentScale = ContentScale.Crop,
             modifier = modifier.fillMaxSize()
         )
@@ -58,7 +69,7 @@ fun Info(navigateToInfoScreen: NavController, hero: Hero?, modifier: Modifier = 
                 .padding(20.dp),
         ) {
             Text(
-                text = hero?.name.toString(),
+                text = hero.name,
                 maxLines = 1,
                 style = MaterialTheme.typography.h3.copy(
                     fontWeight = FontWeight.ExtraBold
@@ -66,7 +77,7 @@ fun Info(navigateToInfoScreen: NavController, hero: Hero?, modifier: Modifier = 
             )
             Spacer(modifier = modifier.height(5.dp))
             Text(
-                text = hero?.description.toString(),
+                text = hero.description,
                 maxLines = 2,
                 style = MaterialTheme.typography.h4.copy(
                     fontWeight = FontWeight.ExtraBold
