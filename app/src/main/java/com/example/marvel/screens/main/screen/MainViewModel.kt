@@ -21,8 +21,7 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(
     private val networkRepository: NetworkRepository,
     private val dataRepository: DatabaseSource
-) :
-    ViewModel() {
+) : ViewModel() {
     private val _heroes =
         MutableStateFlow<HeroState>(HeroState.Loading)
     val heroes: StateFlow<HeroState> = _heroes.asStateFlow()
@@ -53,3 +52,4 @@ class MainViewModel @Inject constructor(
         }
     }
 }
+
