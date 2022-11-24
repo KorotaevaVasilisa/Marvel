@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.AlertDialog
 import androidx.compose.material.Button
@@ -61,7 +62,7 @@ fun MainScreen(
 
 @Composable
 fun Main(
-    heroesState: HeroState<List<Hero>>,
+    heroesState: HeroState,
     currentColor: MutableState<Color>,
     navController: NavController,
     modifier: Modifier = Modifier
@@ -82,9 +83,8 @@ fun Main(
             contentScale = ContentScale.Fit
         )
 
-        Spacer(modifier = modifier.height(26.dp))
-
         Text(
+            modifier = modifier.padding(vertical = 26.dp),
             text = stringResource(id = R.string.choose_your_hero),
             style = MaterialTheme.typography.h4.copy(
                 fontWeight = FontWeight.ExtraBold
@@ -92,27 +92,32 @@ fun Main(
             color = MaterialTheme.colors.onSurface
         )
 
-        Spacer(modifier = modifier.height(26.dp))
-
-        if (heroesState.isLoading) {
-            Box {
-                CircularProgressIndicator(
-                    modifier = modifier
-                        .size(20.dp)
-                        .align(Alignment.Center)
+        when (heroesState) {
+            is HeroState.Loading -> {
+                Box {
+                    CircularProgressIndicator(
+                        modifier = modifier
+                            .size(20.dp)
+                            .align(Alignment.Center)
+                    )
+                }
+            }
+            is HeroState.Error<*> -> {
+                ShowAlert(message = heroesState.message)
+                RowHeroes(
+                    currentColor = currentColor,
+                    heroes = heroesState.data as List<Hero>,
+                    navController = navController
+                )
+            }
+            is HeroState.Data<*> -> {
+                RowHeroes(
+                    currentColor = currentColor,
+                    heroes = heroesState.data as List<Hero>,
+                    navController = navController
                 )
             }
         }
-
-        if (heroesState.error != null) {
-            ShowAlert(message = heroesState.error)
-        }
-
-        RowHeroes(
-            currentColor = currentColor,
-            heroes = heroesState.data,
-            navController = navController
-        )
     }
 }
 
@@ -155,7 +160,7 @@ fun RowHeroes(
             paletteState.dominant
         )
         colors.forEach { _ ->
-            currentColor.value = colors.get(index = 3)
+            currentColor.value = colors.get(index = 0)
         }
 
         CardOfHero(

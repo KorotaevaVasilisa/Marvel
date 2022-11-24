@@ -15,7 +15,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            MarvelTheme(darkTheme = true) {
+            MarvelTheme() {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                 ) {

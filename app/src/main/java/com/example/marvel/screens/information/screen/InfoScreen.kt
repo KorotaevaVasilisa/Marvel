@@ -26,6 +26,7 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.marvel.R
 import com.example.marvel.data.Hero
+import com.example.marvel.data.HeroState
 import com.example.marvel.screens.main.screen.ShowAlert
 
 @Composable
@@ -35,11 +36,17 @@ fun InfoScreen(
 ) {
     val heroState = infoViewModel.hero.collectAsState().value
 
-    if (heroState.error != null) {
-        ShowAlert(message = heroState.error)
+    when (heroState) {
+        is HeroState.Error<*> -> {
+            ShowAlert(message = heroState.message)
+            Info(navHostController, heroState.data as Hero)
+        }
+        is HeroState.Data<*> -> {
+            Info(navHostController, heroState.data as Hero)
+        }
     }
 
-    Info(navHostController, heroState.data)
+
 }
 
 @Composable
