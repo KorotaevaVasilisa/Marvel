@@ -1,18 +1,13 @@
 package com.example.marvel.screens.main.screen
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.AlertDialog
-import androidx.compose.material.Button
 import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
@@ -25,16 +20,12 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.rotate
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.example.marvel.R
 import com.example.marvel.data.Hero
 import com.example.marvel.data.HeroState
+import com.example.marvel.screens.components.ShowAlert
 import com.github.satoshun.compose.palette.coil.rememberCoilPaletteState
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
@@ -61,7 +52,7 @@ fun MainScreen(
 
 @Composable
 fun Main(
-    heroesState: HeroState<List<Hero>>,
+    heroesState: HeroState,
     currentColor: MutableState<Color>,
     navController: NavController,
     modifier: Modifier = Modifier
@@ -71,48 +62,38 @@ fun Main(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
 
-        Spacer(modifier = modifier.height(26.dp))
-
-        Image(
-            painter = painterResource(id = R.drawable.marvel_logo),
-            contentDescription = stringResource(
-                id = R.string.logo
-            ),
-            modifier = modifier.height(45.dp),
-            contentScale = ContentScale.Fit
+        Logo(
+            modifier = Modifier
+                .height(85.dp)
+                .padding(20.dp)
         )
 
-        Spacer(modifier = modifier.height(26.dp))
-
-        Text(
-            text = stringResource(id = R.string.choose_your_hero),
-            style = MaterialTheme.typography.h4.copy(
-                fontWeight = FontWeight.ExtraBold
-            ),
-            color = MaterialTheme.colors.onSurface
-        )
-
-        Spacer(modifier = modifier.height(26.dp))
-
-        if (heroesState.isLoading) {
-            Box {
-                CircularProgressIndicator(
-                    modifier = modifier
-                        .size(20.dp)
-                        .align(Alignment.Center)
+        when (heroesState) {
+            is HeroState.Loading -> {
+                Box {
+                    CircularProgressIndicator(
+                        modifier = modifier
+                            .size(20.dp)
+                            .align(Alignment.Center)
+                    )
+                }
+            }
+            is HeroState.Error<*> -> {
+                ShowAlert(message = heroesState.message)
+                RowHeroes(
+                    currentColor = currentColor,
+                    heroes = heroesState.data as List<Hero>,
+                    navController = navController
+                )
+            }
+            is HeroState.Data<*> -> {
+                RowHeroes(
+                    currentColor = currentColor,
+                    heroes = heroesState.data as List<Hero>,
+                    navController = navController
                 )
             }
         }
-
-        if (heroesState.error != null) {
-            ShowAlert(message = heroesState.error)
-        }
-
-        RowHeroes(
-            currentColor = currentColor,
-            heroes = heroesState.data,
-            navController = navController
-        )
     }
 }
 
@@ -138,25 +119,15 @@ fun RowHeroes(
                 }
             }
     ) { page ->
+
         val paletteState = rememberCoilPaletteState(
             data = heroes[currentPage].path,
             builder = {
                 crossfade(true)
                 allowHardware(false)
             })
-
-        val colors = listOfNotNull(
-            paletteState.vibrant,
-            paletteState.darkVibrant,
-            paletteState.lightVibrant,
-            paletteState.muted,
-            paletteState.darkMuted,
-            paletteState.lightMuted,
-            paletteState.dominant
-        )
-        colors.forEach { _ ->
-            currentColor.value = colors.get(index = 3)
-        }
+        if (paletteState.vibrant != null)
+            currentColor.value = paletteState.vibrant!!
 
         CardOfHero(
             currentOffset = calculateCurrentOffsetForPage(page).absoluteValue,
@@ -166,22 +137,4 @@ fun RowHeroes(
     }
 }
 
-@Composable
-fun ShowAlert(message: String? = "") {
-    var show = remember {
-        mutableStateOf(true)
-    }
-    if (show.value) {
-        AlertDialog(
-            onDismissRequest = { show.value = false },
-            title = { Text(text = message!!) },
-            confirmButton = {
-                Button(onClick = {
-                    show.value = false
-                }) {
-                    Text(text = "Yes")
-                }
-            }
-        )
-    }
-}
+

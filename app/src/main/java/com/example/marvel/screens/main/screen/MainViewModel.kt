@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import com.example.marvel.api.onError
 import com.example.marvel.api.onException
 import com.example.marvel.api.onSuccess
-import com.example.marvel.data.Hero
 import com.example.marvel.data.HeroState
 import com.example.marvel.repository.DatabaseSource
 import com.example.marvel.repository.NetworkRepository
@@ -22,11 +21,10 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(
     private val networkRepository: NetworkRepository,
     private val dataRepository: DatabaseSource
-) :
-    ViewModel() {
+) : ViewModel() {
     private val _heroes =
-        MutableStateFlow<HeroState<List<Hero>>>(HeroState<List<Hero>>(emptyList(), true))
-    val heroes: StateFlow<HeroState<List<Hero>>> = _heroes.asStateFlow()
+        MutableStateFlow<HeroState>(HeroState.Loading)
+    val heroes: StateFlow<HeroState> = _heroes.asStateFlow()
 
     init {
         getAllHeroes()
@@ -38,19 +36,20 @@ class MainViewModel @Inject constructor(
             response.onSuccess { heroesList ->
                 val result = heroesList.data.heroes.map { it.toHero() }
                 dataRepository.insertHeroes(result)
-                _heroes.update { HeroState(result, false) }
+                _heroes.update { HeroState.Data(result) }
             }
-            .onError { code, message ->
-                val deferred = async { dataRepository.getHeroes() }
-                val result = deferred.await()
-                _heroes.update { HeroState(result, false, "Ошибка $message $code") }
-            }
-            .onException { error ->
-                val deferred = async { dataRepository.getHeroes() }
-                val result = deferred.await()
-                _heroes.update { HeroState(result, false, "Ошибка $error ") }
+                .onError { code, message ->
+                    val deferred = async { dataRepository.getHeroes() }
+                    val result = deferred.await()
+                    _heroes.update { HeroState.Error(result, "Ошибка $message $code") }
+                }
+                .onException { error ->
+                    val deferred = async { dataRepository.getHeroes() }
+                    val result = deferred.await()
+                    _heroes.update { HeroState.Error(result, "Ошибка $error ") }
 
-            }
+                }
         }
     }
 }
+

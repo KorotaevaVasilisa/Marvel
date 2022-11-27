@@ -1,7 +1,9 @@
 package com.example.marvel.data
 
-data class HeroState<T>(
-    val data: T,
-    val isLoading: Boolean,
-    val error: String? = null
-)
+sealed class HeroState {
+    object Loading : HeroState()
+    data class Data<T>(val data: T) : HeroState()
+    data class Error<T>(val data: T, val message: String):HeroState()
+}
+
+

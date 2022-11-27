@@ -6,7 +6,6 @@ import androidx.lifecycle.viewModelScope
 import com.example.marvel.api.onError
 import com.example.marvel.api.onException
 import com.example.marvel.api.onSuccess
-import com.example.marvel.data.Hero
 import com.example.marvel.data.HeroState
 import com.example.marvel.repository.DatabaseSource
 import com.example.marvel.repository.NetworkRepository
@@ -25,8 +24,8 @@ class InfoViewModel @Inject constructor(
     private val dataRepository: DatabaseSource
 ) : ViewModel() {
 
-    private val _hero = MutableStateFlow<HeroState<Hero>>(HeroState(Hero(0, "", "", ""), false))
-    val hero: StateFlow<HeroState<Hero>> = _hero.asStateFlow()
+    private val _hero = MutableStateFlow<HeroState>(HeroState.Loading)
+    val hero: StateFlow<HeroState> = _hero.asStateFlow()
 
     init {
         val id = stateHandle.get<Int>("heroId") ?: 0
@@ -39,15 +38,15 @@ class InfoViewModel @Inject constructor(
             val response = networkRepository.getHero(id)
             response.onSuccess {
                 val result = it.data.heroes.first().toHero()
-                _hero.update { HeroState(result, true) }
+                _hero.update { HeroState.Data(result) }
             }
                 .onException { e ->
-                    _hero.update { HeroState(dataRepository.getHeroCached(id), true, e.message) }
+                    val result = dataRepository.getHeroCached(id)
+                    _hero.update { HeroState.Error(result, "Error: ${e.message}") }
                 }
                 .onError { code, message ->
-                    _hero.update {
-                        HeroState(dataRepository.getHeroCached(id), true, "Error $code : $message")
-                    }
+                    val result = dataRepository.getHeroCached(id)
+                    _hero.update { HeroState.Error(result, "Error $code : $message") }
                 }
         }
     }
