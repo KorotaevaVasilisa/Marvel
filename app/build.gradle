@@ -4,6 +4,7 @@ plugins {
     id 'kotlin-kapt'
     id 'dagger.hilt.android.plugin'
     id("io.gitlab.arturbosch.detekt").version("1.22.0-RC2")
+    id 'com.google.gms.google-services'
 }
 
 
@@ -52,6 +53,9 @@ android {
 }
 
 dependencies {
+    implementation 'com.google.firebase:firebase-analytics-ktx'
+    implementation platform('com.google.firebase:firebase-bom:31.1.0')
+    implementation 'com.google.firebase:firebase-messaging:23.1.0'
 // Hilt
     implementation 'com.google.dagger:hilt-android:2.44'
     kapt 'com.google.dagger:hilt-compiler:2.44'
