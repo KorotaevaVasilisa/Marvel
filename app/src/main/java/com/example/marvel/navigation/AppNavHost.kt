@@ -6,6 +6,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import androidx.navigation.navDeepLink
 import com.example.marvel.screens.information.screen.InfoScreen
 import com.example.marvel.screens.main.screen.MainScreen
 
@@ -19,7 +20,11 @@ fun AppNavHost() {
         }
         composable(
             Screen.InfoScreen.route + "/{heroId}",
-            arguments = listOf(navArgument("heroId") { type = NavType.IntType })
+            arguments = listOf(navArgument("heroId") { type = NavType.IntType }),
+            deepLinks = listOf(navDeepLink {
+                uriPattern = "deeplink://app.com/{heroId}"
+            })
+
         ) {
             InfoScreen(navController)
         }
