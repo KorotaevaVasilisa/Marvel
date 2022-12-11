@@ -2,8 +2,11 @@ package com.example.marvel.screens.information.screen
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.icons.Icons
@@ -55,7 +58,10 @@ fun Info(
             modifier = modifier.fillMaxSize()
         )
 
-        IconButton(onClick = { navigateToInfoScreen.popBackStack() }) {
+        IconButton(
+            onClick = { navigateToInfoScreen.popBackStack() },
+            modifier = modifier.windowInsetsPadding(WindowInsets.statusBars)
+        ) {
             Icon(
                 imageVector = Icons.Filled.ArrowBack,
                 contentDescription = stringResource(id = R.string.back),

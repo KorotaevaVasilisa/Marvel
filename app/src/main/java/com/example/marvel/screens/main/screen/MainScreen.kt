@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.runtime.Composable
@@ -58,7 +59,9 @@ fun Main(
     modifier: Modifier = Modifier
 ) {
     Column(
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier
+            .fillMaxSize()
+            .safeDrawingPadding(),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
 
@@ -110,10 +113,10 @@ fun RowHeroes(
         modifier = Modifier
             .fillMaxSize()
             .drawBehind {
-                rotate(degrees = 45f) {
+                rotate(degrees = 50f) {
                     drawRect(
                         color = currentColor.value,
-                        topLeft = Offset(x = 450f, y = 150f),
+                        topLeft = Offset(x = 600f, y = 300f),
                         size = size / 1f
                     )
                 }
