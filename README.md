@@ -26,9 +26,9 @@ right-to-left writing and english and russian locales.
 
 ## Theming
 
-|                   Light Theme                   |               Dark Theme                |
-|:-----------------------------------------------:|:---------------------------------------:|
-| <img src="assets/light_theme.png" height="400"> | <img src="assets/dark.png" width="400"> | 
+|                Light Theme                |                Dark Theme                |
+|:-----------------------------------------:|:----------------------------------------:|
+| <img src="assets/light.png" height="400"> | <img src="assets/dark.png" height="400"> | 
 
 ## Topics
 
