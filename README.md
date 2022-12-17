@@ -43,7 +43,7 @@ right-to-left writing and english and russian locales.
 
 ## Architecture
 
-<img src="\assets\android_arch.png" height="400">
+<img src="\assets\arch.png" height="400">
 
 ## How to run
 
