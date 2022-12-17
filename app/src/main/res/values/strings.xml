@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">Marvel</string>
+    <string name="choose_your_hero">Choose your hero</string>
+    <string name="logo">Logo</string>
+    <string name="hero">Hero</string>
+    <string name="back">Back</string>
+    <string name="notification_title">Look at me!</string>
+    <string name="notification_body">Maybe you will be interested</string>
 </resources>
