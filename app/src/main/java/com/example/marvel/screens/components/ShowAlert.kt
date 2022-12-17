@@ -8,6 +8,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.graphics.Color
 
 @Composable
 fun ShowAlert(message: String? = "") {
@@ -23,7 +24,7 @@ fun ShowAlert(message: String? = "") {
                 Button(onClick = {
                     show = false
                 }) {
-                    Text(text = "Yes")
+                    Text(text = "Yes", color = Color.White)
                 }
             }
         )

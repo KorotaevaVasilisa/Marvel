@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Marvel</string>
+    <string name="choose_your_hero">Выбери своего героя</string>
+    <string name="logo">Название</string>
+    <string name="hero">Герой</string>
+    <string name="back">Назад</string>
+    <string name="notification_title">Посмотри на меня!</string>
+    <string name="notification_body">Может быть тебе будет интересно…</string>
+</resources>

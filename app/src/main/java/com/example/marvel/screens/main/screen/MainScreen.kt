@@ -1,11 +1,12 @@
 package com.example.marvel.screens.main.screen
 
+import android.content.res.Configuration
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.runtime.Composable
@@ -16,57 +17,68 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.drawscope.rotate
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.marvel.data.Hero
 import com.example.marvel.data.HeroState
 import com.example.marvel.screens.components.ShowAlert
-import com.github.satoshun.compose.palette.coil.rememberCoilPaletteState
 import com.google.accompanist.pager.ExperimentalPagerApi
-import com.google.accompanist.pager.HorizontalPager
-import com.google.accompanist.pager.calculateCurrentOffsetForPage
-import kotlin.math.absoluteValue
+import com.google.accompanist.pager.PagerState
+import com.google.accompanist.pager.rememberPagerState
 
+@OptIn(ExperimentalPagerApi::class)
 @Composable
 fun MainScreen(
     navController: NavController,
-    mainViewModel: MainViewModel = hiltViewModel()
+    mainViewModel: MainViewModel = hiltViewModel(),
 ) {
     val heroesState by mainViewModel.heroes.collectAsState()
     val color = remember {
         mutableStateOf(Color.Gray)
     }
-
-    Main(
-        heroesState = heroesState,
-        currentColor = color,
-        navController = navController,
-    )
+    val state = rememberPagerState()
+    val configuration = LocalConfiguration.current
+    when (configuration.orientation) {
+        Configuration.ORIENTATION_LANDSCAPE -> {
+            MainHorizontal(
+                heroesState = heroesState,
+                currentColor = color,
+                navController = navController,
+                pagerState =state
+            )
+        }
+        else -> {
+            MainVertical(
+                heroesState = heroesState,
+                currentColor = color,
+                navController = navController,
+                pagerState = state
+            )
+        }
+    }
 }
 
 
+@OptIn(ExperimentalPagerApi::class)
 @Composable
-fun Main(
+fun MainVertical(
     heroesState: HeroState,
     currentColor: MutableState<Color>,
     navController: NavController,
-    modifier: Modifier = Modifier
+    pagerState: PagerState,
+    modifier: Modifier = Modifier,
 ) {
     Column(
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier
+            .fillMaxSize()
+            .safeDrawingPadding(),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
 
-        Logo(
-            modifier = Modifier
-                .height(85.dp)
-                .padding(20.dp)
-        )
+        Logo()
 
         when (heroesState) {
             is HeroState.Loading -> {
@@ -83,6 +95,7 @@ fun Main(
                 RowHeroes(
                     currentColor = currentColor,
                     heroes = heroesState.data as List<Hero>,
+                    pagerState =pagerState,
                     navController = navController
                 )
             }
@@ -90,6 +103,7 @@ fun Main(
                 RowHeroes(
                     currentColor = currentColor,
                     heroes = heroesState.data as List<Hero>,
+                    pagerState =pagerState,
                     navController = navController
                 )
             }
@@ -99,41 +113,55 @@ fun Main(
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
-fun RowHeroes(
+fun MainHorizontal(
+    heroesState: HeroState,
     currentColor: MutableState<Color>,
-    heroes: List<Hero>,
-    navController: NavController
+    navController: NavController,
+    pagerState: PagerState,
+    modifier: Modifier = Modifier,
 ) {
-    HorizontalPager(
-        count = heroes.size,
-        contentPadding = PaddingValues(32.dp),
-        modifier = Modifier
+    Row(
+        modifier = modifier
             .fillMaxSize()
-            .drawBehind {
-                rotate(degrees = 45f) {
-                    drawRect(
-                        color = currentColor.value,
-                        topLeft = Offset(x = 450f, y = 150f),
-                        size = size / 1f
+            .safeDrawingPadding(),
+    ) {
+
+        Logo(
+            modifier = Modifier
+                .fillMaxHeight()
+                .weight(1f)
+        )
+
+        when (heroesState) {
+            is HeroState.Loading -> {
+                Box(modifier = modifier.weight(1f)) {
+                    CircularProgressIndicator(
+                        modifier = modifier
+                            .size(40.dp)
+                            .align(Alignment.Center),
                     )
                 }
             }
-    ) { page ->
-
-        val paletteState = rememberCoilPaletteState(
-            data = heroes[currentPage].path,
-            builder = {
-                crossfade(true)
-                allowHardware(false)
-            })
-        if (paletteState.vibrant != null)
-            currentColor.value = paletteState.vibrant!!
-
-        CardOfHero(
-            currentOffset = calculateCurrentOffsetForPage(page).absoluteValue,
-            navController = navController,
-            hero = heroes[page]
-        )
+            is HeroState.Error<*> -> {
+                ShowAlert(message = heroesState.message)
+                RowHeroes(
+                    currentColor = currentColor,
+                    heroes = heroesState.data as List<Hero>,
+                    navController = navController,
+                    pagerState = pagerState,
+                    modifier = Modifier.weight(1f)
+                )
+            }
+            is HeroState.Data<*> -> {
+                RowHeroes(
+                    currentColor = currentColor,
+                    heroes = heroesState.data as List<Hero>,
+                    navController = navController,
+                    pagerState = pagerState,
+                    modifier = Modifier.weight(1f)
+                )
+            }
+        }
     }
 }
 

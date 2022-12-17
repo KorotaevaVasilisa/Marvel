@@ -27,7 +27,7 @@ fun HeroInfo(name: String, path: String, modifier: Modifier = Modifier) {
 
         Text(
             text = name,
-            modifier = modifier
+            modifier = Modifier
                 .align(Alignment.BottomStart)
                 .padding(16.dp),
             maxLines = 1,
