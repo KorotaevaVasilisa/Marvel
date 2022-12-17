@@ -16,7 +16,7 @@ class NetworkResultCallAdapterFactory @Inject constructor() : CallAdapter.Factor
     override fun get(
         returnType: Type,
         annotations: Array<out Annotation>,
-        retrofit: Retrofit
+        retrofit: Retrofit,
     ): CallAdapter<*, *>? {
         if (getRawType(returnType) != Call::class.java) {
             return null
@@ -38,7 +38,7 @@ class NetworkResultCallAdapterFactory @Inject constructor() : CallAdapter.Factor
 }
 
 class NetworkResultCall<T : Any>(
-    private val proxy: Call<T>
+    private val proxy: Call<T>,
 ) : Call<NetworkResult<T>> {
     override fun clone(): Call<NetworkResult<T>> {
         return NetworkResultCall(proxy.clone())

@@ -9,14 +9,12 @@ import androidx.compose.ui.Modifier
 import androidx.core.view.WindowCompat
 import com.example.marvel.navigation.AppNavHost
 import com.example.marvel.ui.theme.MarvelTheme
-import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        FirebaseMessaging.getInstance().subscribeToTopic("all").addOnCompleteListener {}
         WindowCompat.setDecorFitsSystemWindows(window, false)
         setContent {
             MarvelTheme() {
